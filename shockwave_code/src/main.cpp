@@ -1,20 +1,21 @@
 #include "main.h"
 #include "lemlib/api.hpp" // IWYU pragma: keep
+#include <vector>
 
 // controller
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // motor groups
-pros::Motor lF(1, pros::E_MOTOR_GEARSET_06);
-pros::Motor lB(3, pros::E_MOTOR_GEARSET_06);
-pros::Motor rF(-9, pros::E_MOTOR_GEARSET_06);
-pros::Motor rB(-10, pros::E_MOTOR_GEARSET_06);
+pros::Motor lF(1, pros::MotorGears::ratio_6_to_1);
+pros::Motor lB(3, pros::MotorGears::ratio_6_to_1);
+pros::Motor rF(-9, pros::MotorGears::ratio_6_to_1);
+pros::Motor rB(-10, pros::MotorGears::ratio_6_to_1);
 
-pros::Motor lT(2, pros::E_MOTOR_GEARSET_18);
-pros::Motor rT(-8, pros::E_MOTOR_GEARSET_18);
+pros::Motor lT(2, pros::MotorGears::ratio_18_to_1);
+pros::Motor rT(-8, pros::MotorGears::ratio_18_to_1);
 
-pros::MotorGroup leftMotors({lF,lB,lT}); // left motor group - ports 3 (reversed), 4, 5 (reversed)
-pros::MotorGroup rightMotors({rF,rB,rT}); // right motor group - ports 6, 7, 9 (reversed)
+pros::MotorGroup leftMotors({lF.get_port(), lB.get_port(), lT.get_port()}); // left drive group
+pros::MotorGroup rightMotors({rF.get_port(), rB.get_port(), rT.get_port()}); // right drive group
 
 // Inertial Sensor on port 10
 pros::Imu imu(17);
@@ -94,6 +95,13 @@ lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
     chassis.calibrate(); // calibrate sensors
+
+    leftMotors.set_gearing(std::vector<pros::MotorGears>{pros::MotorGears::ratio_6_to_1,
+                                                           pros::MotorGears::ratio_6_to_1,
+                                                           pros::MotorGears::ratio_18_to_1});
+    rightMotors.set_gearing(std::vector<pros::MotorGears>{pros::MotorGears::ratio_6_to_1,
+                                                            pros::MotorGears::ratio_6_to_1,
+                                                            pros::MotorGears::ratio_18_to_1});
 
     // the default rate is 50. however, if you need to change the rate, you
     // can do the following.
