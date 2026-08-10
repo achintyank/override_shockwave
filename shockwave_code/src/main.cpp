@@ -5,17 +5,16 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // motor groups
-pros::Motor leftFront(1, pros::MotorGearset::blue);
-pros::Motor leftBottom(3, pros::MotorGearset::blue);
+pros::Motor lF(1, pros::E_MOTOR_GEARSET_06);
+pros::Motor lB(3, pros::E_MOTOR_GEARSET_06);
+pros::Motor rF(-9, pros::E_MOTOR_GEARSET_06);
+pros::Motor rB(-10, pros::E_MOTOR_GEARSET_06);
 
-pros::Motor rightFront(-9, pros::MotorGearset::blue);
-pros::Motor rightBottom(-10, pros::MotorGearset::blue);
+pros::Motor lT(2, pros::E_MOTOR_GEARSET_18);
+pros::Motor rT(-8, pros::E_MOTOR_GEARSET_18);
 
-pros::MotorGroup leftMotors({1,3,2}); // left motor group - ports 3 (reversed), 4, 5 (reversed)
-pros::MotorGroup rightMotors({-8, -9, -10}, pros::MotorGearset::blue); // right motor group - ports 6, 7, 9 (reversed)
-
-pros::Motor leftTop(2, pros::MotorGearset::green);
-pros::Motor rightTop(-8, pros::MotorGearset::green);
+pros::MotorGroup leftMotors({lF,lB,lT}); // left motor group - ports 3 (reversed), 4, 5 (reversed)
+pros::MotorGroup rightMotors({rF,rB,rT}); // right motor group - ports 6, 7, 9 (reversed)
 
 // Inertial Sensor on port 10
 pros::Imu imu(17);
