@@ -6,13 +6,13 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // motor groups
-pros::Motor lF(1, pros::MotorGears::ratio_6_to_1);
-pros::Motor lB(3, pros::MotorGears::ratio_6_to_1);
-pros::Motor rF(-9, pros::MotorGears::ratio_6_to_1);
-pros::Motor rB(-10, pros::MotorGears::ratio_6_to_1);
+pros::Motor lF(-10, pros::MotorGears::ratio_6_to_1);
+pros::Motor lB(-9, pros::MotorGears::ratio_6_to_1);
+pros::Motor lT(8, pros::MotorGears::ratio_18_to_1);
 
-pros::Motor lT(2, pros::MotorGears::ratio_18_to_1);
-pros::Motor rT(-8, pros::MotorGears::ratio_18_to_1);
+pros::Motor rF(1, pros::MotorGears::ratio_6_to_1);
+pros::Motor rB(2, pros::MotorGears::ratio_6_to_1);
+pros::Motor rT(-3, pros::MotorGears::ratio_18_to_1);
 
 pros::MotorGroup leftMotors({lF.get_port(), lB.get_port(), lT.get_port()}); // left drive group
 pros::MotorGroup rightMotors({rF.get_port(), rB.get_port(), rT.get_port()}); // right drive group
@@ -22,7 +22,7 @@ pros::Imu imu(17);
 
 // tracking wheels
 // horizontal tracking wheel encoder. Rotation sensor, port 20, not reversed
-pros::Rotation horizontalEnc(20);
+pros::Rotation horizontalEnc(12);
 // vertical tracking wheel encoder. Rotation sensor, port 11, reversed
 pros::Rotation verticalEnc(-11);
 // horizontal tracking wheel. 2.75" diameter, 5.75" offset, back of the robot (negative)
@@ -34,9 +34,9 @@ lemlib::TrackingWheel vertical(&verticalEnc, lemlib::Omniwheel::NEW_275, -2.5);
 lemlib::Drivetrain drivetrain(&leftMotors, // left motor group
                               &rightMotors, // right motor group
                               10, // 10 inch track width
-                              lemlib::Omniwheel::NEW_4, // using new 4" omnis
+                              lemlib::Omniwheel::NEW_275, // using new 2.75" omnis
                               360, // drivetrain rpm is 360
-                              2 // horizontal drift is 2. If we had traction wheels, it would have been 8
+                              8 // horizontal drift is 2 for all omni wheels. If we had traction wheels, it would have been 8
 );
 
 // lateral motion controller
@@ -94,7 +94,6 @@ lemlib::Chassis chassis(drivetrain, linearController, angularController, sensors
  */
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
-    chassis.calibrate(); // calibrate sensors
 
     leftMotors.set_gearing(std::vector<pros::MotorGears>{pros::MotorGears::ratio_6_to_1,
                                                            pros::MotorGears::ratio_6_to_1,
@@ -102,6 +101,8 @@ void initialize() {
     rightMotors.set_gearing(std::vector<pros::MotorGears>{pros::MotorGears::ratio_6_to_1,
                                                             pros::MotorGears::ratio_6_to_1,
                                                             pros::MotorGears::ratio_18_to_1});
+
+    chassis.calibrate(); // calibrate sensors
 
     // the default rate is 50. however, if you need to change the rate, you
     // can do the following.
@@ -121,7 +122,7 @@ void initialize() {
             // log position telemetry
             lemlib::telemetrySink()->info("Chassis pose: {}", chassis.getPose());
             // delay to save resources
-            pros::delay(50);
+            pros::delay(25);
         }
     });
 }
