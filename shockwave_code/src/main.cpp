@@ -6,25 +6,28 @@
 pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 // motor groups
-pros::Motor lF(-10, pros::MotorGears::ratio_6_to_1);
-pros::Motor lB(-9, pros::MotorGears::ratio_6_to_1);
-pros::Motor lT(8, pros::MotorGears::ratio_18_to_1);
+pros::Motor lF(-20, pros::MotorGears::ratio_6_to_1);
+pros::Motor lB(-10, pros::MotorGears::ratio_6_to_1);
+pros::Motor lT(19, pros::MotorGears::ratio_18_to_1);
 
-pros::Motor rF(1, pros::MotorGears::ratio_6_to_1);
-pros::Motor rB(2, pros::MotorGears::ratio_6_to_1);
-pros::Motor rT(-3, pros::MotorGears::ratio_18_to_1);
+pros::Motor rF(11, pros::MotorGears::ratio_6_to_1);
+pros::Motor rB(1, pros::MotorGears::ratio_6_to_1);
+pros::Motor rT(-12, pros::MotorGears::ratio_18_to_1);
 
 pros::MotorGroup leftMotors({lF.get_port(), lB.get_port(), lT.get_port()}); // left drive group
 pros::MotorGroup rightMotors({rF.get_port(), rB.get_port(), rT.get_port()}); // right drive group
+
+// intake motor
+pros::Motor intake(9, pros::MotorGears::ratio_6_to_1);
 
 // Inertial Sensor on port 10
 pros::Imu imu(17);
 
 // tracking wheels
 // horizontal tracking wheel encoder. Rotation sensor, port 20, not reversed
-pros::Rotation horizontalEnc(12);
+pros::Rotation horizontalEnc(7);
 // vertical tracking wheel encoder. Rotation sensor, port 11, reversed
-pros::Rotation verticalEnc(-11);
+pros::Rotation verticalEnc(-6);
 // horizontal tracking wheel. 2.75" diameter, 5.75" offset, back of the robot (negative)
 lemlib::TrackingWheel horizontal(&horizontalEnc, lemlib::Omniwheel::NEW_275, -5.75);
 // vertical tracking wheel. 2.75" diameter, 2.5" offset, left of the robot (negative)
@@ -189,5 +192,13 @@ void opcontrol() {
         chassis.arcade(leftY, rightX);
         // delay to save resources
         pros::delay(10);
+
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+            intake.move_velocity(10000);
+        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+            intake.move_velocity(-10000);
+        } else {
+            intake.move_velocity(0);
+        }
     }
 }
