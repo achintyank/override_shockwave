@@ -20,6 +20,10 @@ pros::MotorGroup rightMotors({rF.get_port(), rB.get_port(), rT.get_port()}); // 
 // intake motor
 pros::Motor intake(9, pros::MotorGears::ratio_6_to_1);
 
+// cascade motor
+pros::Motor cascade(3, pros::MotorGears::ratio_6_to_1);
+
+
 // Inertial Sensor on port 10
 pros::Imu imu(17);
 
@@ -193,12 +197,22 @@ void opcontrol() {
         // delay to save resources
         pros::delay(10);
 
+        // intake control
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
             intake.move_velocity(10000);
         } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
             intake.move_velocity(-10000);
         } else {
             intake.move_velocity(0);
+        }
+
+        // cascade control
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+            cascade.move_velocity(10000);
+        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+            cascade.move_velocity(-10000);
+        } else {
+            cascade.move_velocity(0);
         }
     }
 }
