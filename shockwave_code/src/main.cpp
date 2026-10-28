@@ -20,8 +20,9 @@ pros::MotorGroup rightMotors({rF.get_port(), rB.get_port(), rT.get_port()}); // 
 // intake motor
 pros::Motor intake(9, pros::MotorGears::ratio_6_to_1);
 
-// cascade motor
-pros::Motor cascade(3, pros::MotorGears::ratio_6_to_1);
+// cascade motors
+pros::Motor cascadeRight(3,pros::MotorGears::ratio_18_to_1);
+pros::Motor cascadeLeft(-4,pros::MotorGears::ratio_18_to_1);
 
 
 // Inertial Sensor on port 10
@@ -188,6 +189,10 @@ void autonomous() {
 void opcontrol() {
     // controller
     // loop to continuously update motors
+
+    cascadeRight.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    cascadeLeft.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    
     while (true) {
         // get joystick positions
         int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
@@ -199,20 +204,23 @@ void opcontrol() {
 
         // intake control
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-            intake.move_velocity(10000);
+            intake.move_velocity(600);
         } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
-            intake.move_velocity(-10000);
+            intake.move_velocity(-600);
         } else {
             intake.move_velocity(0);
         }
 
         // cascade control
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-            cascade.move_velocity(10000);
+            cascadeRight.move_velocity(200);
+            cascadeLeft.move_velocity(200);
         } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-            cascade.move_velocity(-10000);
+            cascadeRight.move_velocity(-200);
+            cascadeLeft.move_velocity(-200);
         } else {
-            cascade.move_velocity(0);
+            cascadeRight.move_velocity(0);
+            cascadeLeft.move_velocity(0);
         }
     }
 }
